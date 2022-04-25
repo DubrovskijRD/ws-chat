@@ -27,8 +27,12 @@ class FriendQueryHandler(BaseQueryHandler):
 
     async def handle(self, query: Query, session: WebsocketSession):
         friends_id = await self.friend_repo.get_friends_id(session.user_id)
-        spec = self.user_repo.UserSearchSpec(id_list=friends_id)
-        user_list = await self.user_repo.get_users(spec)
+
+        if friends_id:
+            spec = self.user_repo.UserSearchSpec(id_list=friends_id)
+            user_list = await self.user_repo.get_users(spec)
+        else:
+            user_list = []
         await session.ws.send_json({"response": UserSchema().dump(user_list, many=True), "query": query.to_dict()})
 
 
