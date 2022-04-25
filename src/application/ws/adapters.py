@@ -30,6 +30,7 @@ class CommandSchema(BaseSchema):
     resource = fields.Str(required=True)
     payload = fields.Dict(required=True)
     action = fields.Str(required=True)
+    uid = fields.Str()
 
     @post_load
     def init_action(self, in_data, **kwargs):

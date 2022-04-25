@@ -31,6 +31,7 @@ class Command(BaseWsEvent):
     resource: str
     action: CommandAction
     payload: dict
+    uid: str = "-"
 
     _schema = CommandSchema()
 
