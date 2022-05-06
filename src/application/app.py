@@ -76,7 +76,7 @@ async def app_factory():
     ws_server.disconnect_handler = container.disconnect_handler
 
     app.ws_server = ws_server
-    app['salt'] = "a78aj%8402"
+    app['salt'] = os.getenv("DB_NAME")
 
     # await ahsa.init_db(app, metadata)
 
