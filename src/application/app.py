@@ -66,7 +66,7 @@ async def app_factory():
         ('room', await container.room_command_handler())
     ))
     ws_server.register_query_handlers((
-        ('user', container.user_search_handler()),
+        ('user', await container.user_search_handler()),
         ('friend', await container.friend_query_handler()),
         ('friend_request', await container.friend_request_query_handler()),
         ('room', await container.room_query_handler()),

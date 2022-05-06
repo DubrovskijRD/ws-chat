@@ -6,8 +6,8 @@ from src.data.user.repo import UserRepo
 
 
 class OnConnectHandler:
-    def __init__(self, friends_repo, user_repo: UserRepo, ws_connection_repo):
-        self.friends_repo = friends_repo
+    def __init__(self, friend_repo, user_repo: UserRepo, ws_connection_repo):
+        self.friend_repo = friend_repo
         self.user_repo = user_repo
         self.ws_connection_repo = ws_connection_repo
 
@@ -21,7 +21,7 @@ class OnConnectHandler:
         await self.user_repo.update_user(user_id=session.user_id, data={"online": online, "last_activity": datetime.now()})
         await self.user_repo.commit()
 
-        friends_id = await self.friends_repo.get_friends_id(session.user_id)
+        friends_id = await self.friend_repo.get_friends_id(session.user_id)
         command = Command(resource='friends',
                           action=CommandAction.UPDATE,
                           payload={
@@ -37,8 +37,8 @@ class OnConnectHandler:
 
 
 class OnDisconnectHandler:
-    def __init__(self, friends_repo, user_repo: UserRepo, ws_connection_repo):
-        self.friends_repo = friends_repo
+    def __init__(self, friend_repo, user_repo: UserRepo, ws_connection_repo):
+        self.friend_repo = friend_repo
         self.user_repo = user_repo
         self.ws_connection_repo = ws_connection_repo
 
@@ -55,7 +55,7 @@ class OnDisconnectHandler:
         await self.user_repo.update_user(user_id=session.user_id,
                                          data={"online": online, "last_activity": datetime.now()})
         await self.user_repo.commit()
-        friends_id = await self.friends_repo.get_friends_id(session.user_id)
+        friends_id = await self.friend_repo.get_friends_id(session.user_id)
         command = Command(resource='friends',
                           action=CommandAction.UPDATE,
                           payload={

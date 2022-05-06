@@ -10,6 +10,7 @@ from src.core.entity.user import Device
 class SuccessResult(SuccessResultBase):
     device_name: str
     token: str
+    id: int
 
 
 @dataclass
@@ -46,7 +47,7 @@ class UseCase(UseCaseBase):
                                                        token=device_token)
         await self.user_repo.commit()
 
-        return SuccessResult(device_name=device_name, token=device_token)
+        return SuccessResult(device_name=device_name, token=device_token, id=user.id)
 
 
 # import logging

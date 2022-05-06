@@ -9,13 +9,18 @@ from src.core.exceptions.base import ValidationError
 
 class UserSearchQueryHandler(BaseQueryHandler):
 
-    def __init__(self, user_repo: UserRepo):
+    def __init__(self, user_repo: UserRepo, friend_repo: FriendsRepo):
         self.user_repo = user_repo
+        self.friend_repo = friend_repo
 
     async def handle(self, query: Query, session: WebsocketSession):
+        friends_id = await self.friend_repo.get_friends_id(session.user_id)
+        friends_id.append(session.user_id)
+
         user_search_spec = self.user_repo.UserSearchSpec(email_like=query.payload.get('q'),
                                                          id_list=query.payload.get('id_list'))
-        user_list = await self.user_repo.get_users(user_search_spec)
+        exclude = self.user_repo.UserSearchSpec(id_list=friends_id)
+        user_list = await self.user_repo.get_users(user_search_spec, exclude=exclude)
         await session.ws.send_json({"response": UserSchema().dump(user_list, many=True), "query": query.to_dict()})
 
 
@@ -46,16 +51,20 @@ class FriendRequestQueryHandler(BaseQueryHandler):
         response = {}
         if query.payload.get("incoming"):
             incoming_id = await self.friend_repo.get_incoming_friend_request(session.user_id)
+            incoming_data = []
             if incoming_id:
                 spec = self.user_repo.UserSearchSpec(id_list=incoming_id)
                 user_list = await self.user_repo.get_users(spec)
-                response.update({"incoming": UserSchema().dump(user_list, many=True)})
+                incoming_data = UserSchema().dump(user_list, many=True)
+            response.update({"incoming": incoming_data})
         if query.payload.get("outgoing"):
             outgoing_id = await self.friend_repo.get_outgoing_friend_request(session.user_id)
+            outgoing_data = []
             if outgoing_id:
                 spec = self.user_repo.UserSearchSpec(id_list=outgoing_id)
                 user_list = await self.user_repo.get_users(spec)
-                response.update({"outgoing": UserSchema().dump(user_list, many=True)})
+                outgoing_data = UserSchema().dump(user_list, many=True)
+            response.update({"outgoing": outgoing_data})
         await session.ws.send_json({"response": response, "query": query.to_dict()})
 
 

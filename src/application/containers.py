@@ -126,21 +126,22 @@ class Container(containers.DeclarativeContainer):
     # )
     connect_handler = providers.Factory(
         connection.OnConnectHandler,
-        friends_repo=friend_repo,
+        friend_repo=friend_repo,
         user_repo=user_repo,
         ws_connection_repo=ws_connection_repo
     )
 
     disconnect_handler = providers.Factory(
         connection.OnDisconnectHandler,
-        friends_repo=friend_repo,
+        friend_repo=friend_repo,
         user_repo=user_repo,
         ws_connection_repo=ws_connection_repo
     )
 
     user_search_handler = providers.Factory(
         query.UserSearchQueryHandler,
-        user_repo=user_repo
+        user_repo=user_repo,
+        friend_repo=friend_repo,
     )
 
     friend_query_handler = providers.Factory(

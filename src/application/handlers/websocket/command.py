@@ -34,11 +34,14 @@ class RoomCommandHandler(BaseCommandHandler):
             await session.ws.send_json(DomainValidationError("members_id: Missing").to_dict())
             return []
         try:
+            members_id.append(session.user_id)
+            members_id = list(set(members_id))
             room_id = await self.user_repo.create_room(creator_id=session.user_id, members_id=members_id,
-                                                   private=command.payload.get('private', True))
+                                                       private=command.payload.get('private', True))
         # todo NotFound, NotUnique
         except:
             raise
+        await self.user_repo.commit()
         return [Broadcast(receivers=members_id,
                           event=CommandDoneEvent(command=command, user_id=session.user_id, result={"id": room_id}))]
 
@@ -67,6 +70,6 @@ class MessageCommandHandler(BaseCommandHandler):
                                                      msg_type=payload['msg_type'],
                                                      msg_body=payload['msg_body'])
         await self.user_repo.commit()
-
+        message_list = await self.user_repo.get_messages(self.user_repo.MessageSearchSpec(message_id=msg_id))
         return [Broadcast(receivers=room.members_id,
-                          event=CommandDoneEvent(command=command, user_id=session.user_id, result={"id": msg_id}))]
+                          event=CommandDoneEvent(command=command, user_id=session.user_id, result=MessageSchema().dump(message_list, many=True)))]

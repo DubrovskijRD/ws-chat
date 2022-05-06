@@ -105,6 +105,7 @@ class MessageSearchSpec:
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     message_body_like: Optional[str] = None
+    message_id: Optional[int] = None
 
 
 class UserRepo:
@@ -117,7 +118,8 @@ class UserRepo:
     def __init__(self, session):
         self.session = session
 
-    async def get_users(self, spec: UserSearchSpec) -> List[User]:
+    async def get_users(self, spec: UserSearchSpec, exclude: Optional[UserSearchSpec] = None) -> List[User]:
+
         stmt = select(UserModel)
         if spec.id_list:
             stmt = stmt.where(UserModel.id.in_(spec.id_list))
@@ -127,6 +129,9 @@ class UserRepo:
             stmt = stmt.where(UserModel.email.like(f"%{spec.email_like}%"))
         if spec.token:
             stmt = stmt.join(DeviceModel).where(DeviceModel.token == spec.token)
+
+        if exclude and exclude.id_list:
+            stmt = stmt.where(UserModel.id.notin_(exclude.id_list))
 
         result = await self.session.execute(stmt)
         return [
@@ -243,6 +248,8 @@ class UserRepo:
 
     async def get_messages(self, spec: MessageSearchSpec):
         stmt = select(MessageModel)
+        if spec.message_id:
+            stmt = stmt.where(MessageModel.id == spec.message_id)
         if spec.room_id:
             stmt = stmt.where(MessageModel.room_id == spec.room_id)
         if spec.start_time:
