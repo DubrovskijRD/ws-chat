@@ -52,8 +52,8 @@ class DbSessionResource(resources.Resource):
         await session.close()
 
 
-async def init_friend_repo():
-    repo = FriendsRepo(host = "localhost", port = 7474, db_name = "neo4j", auth = ("neo4j", "test"))
+async def init_friend_repo(host, port, db_name, password):
+    repo = FriendsRepo(host=host, port=port, db_name=db_name, auth=("neo4j", password))
     try:
         yield repo
     finally:
@@ -101,8 +101,11 @@ class Container(containers.DeclarativeContainer):
         db_session
     )
     friend_repo = providers.Resource(
-        init_friend_repo
-        # host="localhost", port=7474, db_name="neo4j", auth=("neo4j", "test")
+        init_friend_repo,
+        host=config.neo4j_host,
+        port=config.neo4j_port,
+        db_name=config.neo4j_db_name,
+        password=config.neo4j_password
     )
 
     ws_connection_repo = providers.Singleton(
