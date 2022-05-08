@@ -85,7 +85,7 @@ class Container(containers.DeclarativeContainer):
     notificator = providers.Factory(
         Notificator,
         email_sender=config.email_user,
-        host="smtp.gmail.com",
+        host="smtp.yandex.ru",
         user=config.email_user,
         password=config.email_password
 
