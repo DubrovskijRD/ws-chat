@@ -38,7 +38,7 @@ async def on_shutdown(app: web.Application):
 async def app_factory():
     container = Container()
     container.config.from_dict(
-        dict(email_user="romik8jones@gmail.com",
+        dict(email_user=os.getenv("EMAIL_USER"),
              email_password=os.getenv("EMAIL_PASS"),
              db_user=os.getenv("DB_USER"),
              db_password=os.getenv("DB_PASS"),
