@@ -41,17 +41,15 @@ class UseCase(UseCaseBase):
             user_id, type_="register", code=code,
             expires_at=(datetime.utcnow()+timedelta(days=1))
         )
-        res = await self.friend_repo.create_user(user_id, email=email)
-        print(res)
-        await self.user_repo.commit()
-
-
-
         try:
             await self.notificator.send_email(to=email, subject="Welcome! Thank's for register:)",
                                               text=f"This is your confirmation code: {code}")
         except Exception:
             logger.exception("notify error")
+            return FailResult(code=11, msg="Server error, please try later")
+        res = await self.friend_repo.create_user(user_id, email=email)
+
+        await self.user_repo.commit()
 
         return SuccessResult()
 
