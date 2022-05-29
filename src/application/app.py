@@ -12,7 +12,6 @@ from src.application.containers import Container, container_middleware
 from src.application.ws.server import WebSocketServer
 from src.application.db import metadata
 
-
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -37,18 +36,19 @@ async def on_shutdown(app: web.Application):
 
 async def app_factory():
     container = Container()
+    conf = dict(email_user=os.getenv("EMAIL_USER"),
+                email_password=os.getenv("EMAIL_PASS"),
+                db_user=os.getenv("DB_USER"),
+                db_password=os.getenv("DB_PASS"),
+                db_host=os.getenv("DB_HOST"),
+                db_name=os.getenv("DB_NAME"),
+                neo4j_host="localhost",
+                neo4j_port=7474,
+                neo4j_db_name="neo4j",
+                neo4j_password=os.getenv("NEO4J_PASS"),
+                )
     container.config.from_dict(
-        dict(email_user=os.getenv("EMAIL_USER"),
-             email_password=os.getenv("EMAIL_PASS"),
-             db_user=os.getenv("DB_USER"),
-             db_password=os.getenv("DB_PASS"),
-             db_host=os.getenv("DB_HOST"),
-             db_name=os.getenv("DB_NAME"),
-             neo4j_host="localhost",
-             neo4j_port=7474,
-             neo4j_db_name="neo4j",
-             neo4j_password=os.getenv("NEO4J_PASS"),
-             )
+        conf
     )
 
     # engine = container.engine()
