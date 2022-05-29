@@ -6,5 +6,5 @@ frontend - https://github.com/DubrovskijRD/ws-chat-front
 *run:*
 ```commandline
 docker build -t ws-chat .
-docker run --env-file ./.env -p 8080:8080 chat_back
+docker run --env-file ./.env -p 8080:8080 ws-chat
 ```
