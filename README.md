@@ -3,11 +3,15 @@ simple chat on websockets - aiohttp, sqlalchemy, neo4j
 frontend - https://github.com/DubrovskijRD/ws-chat-front
 
 
-##Goals
-- get experience with async SQLAlchemy ✔️
-- get experience with websocket ✔️
-- get experience with Neo4j ✔️
-- get experience with pytest-asyncio
+###Goals:
+
+- get experience with: 
+   - async SQLAlchemy ✔️
+   - websocket ✔️
+   - Neo4j ✔️
+   - async dependency_injector ✔
+   -  pytest-asyncio
+
 
 *run:*
 ```commandline
