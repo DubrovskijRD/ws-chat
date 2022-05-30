@@ -1,23 +1,10 @@
-import asyncio
-import aiohttp
-from aioneo4j import Neo4j
-
+import pytest
 
 from src.data.frineds.repo import FriendsRepo
 
-# async def go():
-#     async with Neo4j('http://localhost:7474/', auth=("neo4j", "test")) as neo4j:
-#         # data = await neo4j.data()
-#         # print(data)
-#         # assert bool(data)
-#         result = await neo4j.cypher("CREATE (ee:Person {name: 'Roma', from: 'Russia', kloutScore: 9999})")
-#         print(result)
-#
-#
 
-
-
-async def go():
+@pytest.mark.asyncio
+async def test_friends_repo():
     db_name = "neo4j"
     host = "localhost"
     port = 7474
@@ -61,51 +48,4 @@ async def go():
     print(res)
     await repo.close()
 
-
-
-   #  session = aiohttp.client.ClientSession()
-   #  body = {
-   #     "statements": [{
-   #         "statement": "CREATE (n:Person $props) RETURN n",
-   #         "parameters": {
-   #             "props": {
-   #                 "name": "Roma"
-   #             }
-   #         }
-   #     }]
-   # }
-    # response = None
-    # try:
-    #     response = await session.request('POST', url, auth=auth, json=body)
-    #     data = await response.json()
-    # finally:
-    #     if response is not None:
-    #         await response.release()
-
-    # await session.close()
-    # print(data)
-    # async with aiohttp.client.ClientSession() as session:
-    #     async with session.request('POST', url, auth=auth,
-    #                                # headers={"Content-Type": "application/json"},
-    #                                json={
-    #
-    #                                    "statements": [{
-    #                                        "statement": "CREATE (n:Person $props) RETURN n",
-    #                                        "parameters": {
-    #                                            "props": {
-    #                                                "name": "Roma"
-    #                                            }
-    #                                        }
-    #                                    }]
-    #
-    #                                }) as req:
-    #         result = await req.json()
-    #         print(result)
-        # async with session.request('POST', result['commit'], auth=auth, json={}) as req:
-        #     result = await req.json()
-        #     print(result)
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(go())
-loop.close()
 
