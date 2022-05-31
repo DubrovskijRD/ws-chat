@@ -138,7 +138,7 @@ class WebSocketServer:
         except NotFoundError:
             raise UnauthorizedError()
         except Exception:
-            self.user_repo.rollback()
+            await self.user_repo.rollback()
             raise
         if not user_list:
             raise UnauthorizedError()
