@@ -42,7 +42,7 @@ async def app_factory():
                 db_password=os.getenv("DB_PASS"),
                 db_host=os.getenv("DB_HOST"),
                 db_name=os.getenv("DB_NAME"),
-                neo4j_host="localhost",
+                neo4j_host=os.getenv("NEO4J_HOST"),
                 neo4j_port=7474,
                 neo4j_db_name="neo4j",
                 neo4j_password=os.getenv("NEO4J_PASS"),
