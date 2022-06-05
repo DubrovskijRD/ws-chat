@@ -33,7 +33,10 @@ class ConfirmationView(web.View, CorsViewMixin):
         di = self.request['di']
         user_repo = di.user_repo()
         confirmation_list = await user_repo.get_confirmations(spec=user_repo.ConfirmationSearchSpec(code=confirm_code))
-        confirmation = confirmation_list[0]
+        try:
+            confirmation = confirmation_list[0]
+        except IndexError:
+            return web.json_response({"status": "fail", "error": {"Not found": "неверный код подвтерждения"}})
         if not confirmation.confirm():
             return web.json_response({"status": "fail"})
         await user_repo.update_confirmation(confirmation_id=confirmation.id, data=asdict(confirmation))
