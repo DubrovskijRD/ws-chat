@@ -35,6 +35,7 @@ class UseCase(UseCaseBase):
         try:
             user_id = await self.user_repo.create_user(email, password)
         except NotUniqueError as e:
+            await self.user_repo.rollback()
             return FailResult(e.code, str(e))
         code = Confirmation.generate_code()
         confirmation_id = await self.user_repo.create_confirmation(
@@ -46,6 +47,7 @@ class UseCase(UseCaseBase):
                                               text=f"This is your confirmation code: {code}")
         except Exception:
             logger.exception("notify error")
+            await self.user_repo.rollback()
             return FailResult(code=11, msg="Server error, please try later")
         res = await self.friend_repo.create_user(user_id, email=email)
 
