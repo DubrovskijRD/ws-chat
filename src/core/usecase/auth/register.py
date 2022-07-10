@@ -55,7 +55,7 @@ class UseCase(UseCaseBase):
   </body>
 </html>
 """
-            await self.notificator.send_email(to=email, subject="Спасибо за регистрацию!",
+            await self.notificator.send_email(to=email, subject="Thank's for register:)",
                                               text=html, textType="html")
         except Exception:
             logger.exception("notify error")
