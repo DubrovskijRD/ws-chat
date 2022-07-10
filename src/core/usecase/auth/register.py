@@ -10,6 +10,7 @@ from src.core.entity.user import Confirmation
 
 logger = logging.getLogger(__name__)
 
+CONFIRM_REGISTER_URL = 'http://seaborgix.ru/register/confirm/'
 
 @dataclass
 class SuccessResult(SuccessResultBase):
@@ -43,8 +44,19 @@ class UseCase(UseCaseBase):
             expires_at=(datetime.utcnow()+timedelta(days=1))
         )
         try:
-            await self.notificator.send_email(to=email, subject="Welcome! Thank's for register:)",
-                                              text=f"This is your confirmation code: {code}")
+            html = f"""
+<html>
+  <head></head>
+  <body>
+    <p>Спасибо за регистрацию!<br>
+       Для подтверждения регистрации, перейдите по ссылке:<br>
+       <a href={CONFIRM_REGISTER_URL + code}>{CONFIRM_REGISTER_URL + code}</a>.
+    </p>
+  </body>
+</html>
+"""
+            await self.notificator.send_email(to=email, subject="Спасибо за регистрацию!",
+                                              text=html, textType="html")
         except Exception:
             logger.exception("notify error")
             await self.user_repo.rollback()
