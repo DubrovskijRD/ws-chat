@@ -24,6 +24,8 @@ class UseCase(UseCaseBase):
         self.user_repo = user_repo
 
     def execute(self, confirm_code) -> Union[SuccessResult, FailResult]:
+
+        ### NOT USED, SEE HANDLERS/HTTP/AUTH
         try:
             confirmation = self.user_repo.get_confirmations(confirm_code)
         except NotFoundError as e:

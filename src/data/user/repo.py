@@ -149,7 +149,7 @@ class UserRepo:
         return user_db.id
 
     async def update_user(self, user_id: int, data: dict):
-        data = {k: v for k, v in data.items() if k in ['online', 'last_activity', 'active']}
+        data = {k: v for k, v in data.items() if k in ['online', 'last_activity', 'active', 'password']}
         if not data:
             return False
 

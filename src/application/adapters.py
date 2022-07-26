@@ -57,4 +57,10 @@ class LoginSchema(AuthSchema):
     device_info = fields.Dict(default={}, missing={})
 
 
+class ResetPasswordSchema(Schema):
+    email = fields.Email(required=True)
 
+
+class ResetPasswordConfirmSchema(Schema):
+    password = fields.Str(required=True, validate=validate.Length(min=8))
+    confirm_code = fields.Str(required=True)

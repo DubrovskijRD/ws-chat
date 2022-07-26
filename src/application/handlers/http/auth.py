@@ -5,7 +5,7 @@ from marshmallow import ValidationError
 from aiohttp_cors import CorsViewMixin
 from src.application.helpers import hash_password
 from src.core.entity.user import User
-from src.application.adapters import AuthSchema, LoginSchema
+from src.application.adapters import AuthSchema, LoginSchema, ResetPasswordSchema, ResetPasswordConfirmSchema
 
 
 class RegisterView(web.View, CorsViewMixin):
@@ -37,6 +37,8 @@ class ConfirmationView(web.View, CorsViewMixin):
             confirmation = confirmation_list[0]
         except IndexError:
             return web.json_response({"status": "fail", "error": {"Not found": "неверный код подвтерждения"}})
+        if confirmation.type_ != 'register':
+            return web.json_response({"status": "fail", "error": {"Not found": "неверный код подвтерждения"}})
         if not confirmation.confirm():
             return web.json_response({"status": "fail"})
         await user_repo.update_confirmation(confirmation_id=confirmation.id, data=asdict(confirmation))
@@ -64,3 +66,39 @@ class LoginView(web.View, CorsViewMixin):
         if isinstance(result, use_case.SuccessResult):
             return web.json_response({"status": "success", "data": asdict(result)})
         return web.json_response({"status": "fail", "error": asdict(result)})
+
+
+class ResetPasswordView(web.View, CorsViewMixin):
+
+    async def post(self):
+        data = await self.request.json()
+        schema = ResetPasswordSchema()
+        try:
+            data = schema.load(data)
+        except ValidationError as e:
+            return web.json_response({"status": "fail", "error": e.normalized_messages()})
+        di = self.request['di']
+        use_case = di.reset_password_use_case()
+        result = await use_case.execute(data['email'])
+        if isinstance(result, use_case.SuccessResult):
+            return web.json_response({"status": "success", "data": asdict(result)})
+        return web.json_response({"status": "fail", "error": asdict(result)})
+
+
+class ResetPasswordConfirmView(web.View, CorsViewMixin):
+
+    async def post(self):
+        data = await self.request.json()
+        schema = ResetPasswordConfirmSchema()
+        try:
+            data = schema.load(data)
+        except ValidationError as e:
+            return web.json_response({"status": "fail", "error": e.normalized_messages()})
+        data['password'] = hash_password(password=data['password'], salt=self.request.app['salt'])
+        di = self.request['di']
+        use_case = di.reset_password_confirm_use_case()
+        result = await use_case.execute(data['confirm_code'], data['password'])
+        if isinstance(result, use_case.SuccessResult):
+            return web.json_response({"status": "success", "data": asdict(result)})
+        return web.json_response({"status": "fail", "error": asdict(result)})
+

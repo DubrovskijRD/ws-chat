@@ -14,6 +14,8 @@ from src.data.user.repo import UserRepo
 from src.data.frineds.repo import FriendsRepo
 from src.core.usecase.auth.register import UseCase as RegisterUseCase
 from src.core.usecase.auth.login import UseCase as LoginUseCase
+from src.core.usecase.auth.reset_pass import UseCase as ResetPassUseCase
+from src.core.usecase.auth.reset_pass_confirm import UseCase as ResetPassConfirmUseCase
 from src.application.handlers.websocket import query, connection, command
 
 
@@ -121,6 +123,17 @@ class Container(containers.DeclarativeContainer):
 
     login_use_case = providers.Factory(
         LoginUseCase,
+        user_repo=user_repo
+    )
+
+    reset_password_use_case = providers.Factory(
+        ResetPassUseCase,
+        user_repo=user_repo,
+        notificator=notificator
+    )
+
+    reset_password_confirm_use_case = providers.Factory(
+        ResetPassConfirmUseCase,
         user_repo=user_repo
     )
 
